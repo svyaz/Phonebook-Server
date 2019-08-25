@@ -1,0 +1,92 @@
+$font: Tahoma, Arial, serif;
+$fontSize: 14px;
+$grey: #f0f0f0;
+$grey1: #bababa;
+$grey2: #cccccc;
+$grey3: #fefefe;
+$almostBlack: #222;
+$lightPink: #fddfdf;
+$red: #f00;
+$blue: #87cefa;
+$padding-1: 10px;
+$padding-2: 0.3em;
+$paddingInput: 5px;
+
+@mixin list-row {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+body {
+  background-color: $grey;
+  font-family: $font;
+  font-size: $fontSize;
+  color: $almostBlack;
+}
+
+.top-space {
+  padding-top: 1em;
+}
+
+.list-header {
+  text-align: left;
+  background-color: $blue;
+  padding: $padding-2 0 0;
+  @include list-row;
+}
+
+.list-element {
+  padding-top: $padding-2;
+  border-bottom: solid 1px $blue;
+  @include list-row;
+}
+
+.row {
+  div {
+    padding-right: $padding-1;
+    padding-left: $padding-1;
+  }
+
+  label,
+  input,
+  button {
+    width: 100%;
+  }
+
+  input,
+  button {
+    border: solid 1px $grey1;
+    border-radius: 3px;
+  }
+
+  button {
+    background: linear-gradient(0deg, $grey2, $grey3);
+  }
+
+  input {
+    padding-left: $paddingInput;
+    padding-right: $paddingInput;
+  }
+}
+
+.centered {
+  text-align: center;
+}
+
+.empty-field {
+  background-color: $lightPink;
+}
+
+.error-message {
+  color: $red;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
