@@ -31,7 +31,7 @@ router.get('/getContacts', function (req, res) {
 
 /* Add contact. */
 router.post('/addContact', function (req, res) {
-    const newItem = req.body.request;
+    const newItem = req.body.contact;
     const addStatus = {};
 
     const isFound = list.some(function (item) {
@@ -55,16 +55,15 @@ router.post('/addContact', function (req, res) {
 
 /* Delete contact. */
 router.post('/deleteContact', function (req, res) {
-    const id = req.body.id;
-    const index = list.findIndex(function (item) {
-        return item.id === id;
+    const idList = req.body.idList;
+
+    list = list.filter(function (item) {
+        return !idList.includes(item.id);
     });
 
-    if (index >= 0) {
-        list.splice(index, 1);
-    }
-
-    res.send();
+    res.send({
+        status: true
+    });
 });
 
 module.exports = router;

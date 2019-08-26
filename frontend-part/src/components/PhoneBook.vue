@@ -34,6 +34,7 @@
     import SearchForm from './SearchForm.vue';
 
     import PhoneBookService from '../PhoneBookService';
+
     const service = new PhoneBookService();
 
     export default {
@@ -116,6 +117,8 @@
                     `Вы действительно хотите удалить ${item.fullName}?` :
                     `Вы действительно хотите удалить выбранные контакты?`;
 
+                const that = this;
+
                 this.$bvModal.msgBoxConfirm(confirmMessage, {
                     size: 'md',
                     buttonSize: 'sm',
@@ -128,11 +131,20 @@
                     centered: false
                 }).then(value => {
                     if (value) {
-                        const toDelete = this.selectedList.length === 0 ?
-                            [item] : this.selectedList;
+                        const listToDelete = this.selectedList.length === 0 ?
+                            [item.id] :
+                            this.selectedList.map(function (e) {
+                                return e.id;
+                            });
 
-                        this.list = this.list.filter(function (e) {
-                            return !toDelete.includes(e);
+                        service.deleteContact(listToDelete).done(function (response) {
+                            if (response.status) {
+                                that.loadContacts(that.searchString);
+                            }
+                        }).fail(function () {
+                            console.log("removeItem request error.");
+                        }).always(function () {
+                            console.log("Always in removeItem.");
                         });
 
                         this.selectedList = [];

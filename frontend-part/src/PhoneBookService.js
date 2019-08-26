@@ -9,15 +9,15 @@ export default function PhoneBookService() {
         return $.post({
             url: '/addContact',
             contentType: 'application/json',
-            data: JSON.stringify({request: contact})
+            data: JSON.stringify({contact: contact})
         });
     };
 
-    this.deleteContact = function (id) {
+    this.deleteContact = function (idList) {
         return $.post({
             url: '/deleteContact',
             contentType: 'application/json',
-            data: JSON.stringify({id: id})
+            data: JSON.stringify({idList: idList})
         });
     };
 };
