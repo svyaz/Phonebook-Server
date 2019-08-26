@@ -3,7 +3,7 @@
         <AddItemForm v-model="newContact"
                      :inputAddStatus="addStatus"
                      @add-item="addItem"></AddItemForm>
-        <SearchForm @search-items="setSearchString"></SearchForm>
+        <SearchForm @search-items="loadContacts"></SearchForm>
         <div class="row list-header">
             <div class="col-1"><label><input type="checkbox" v-model="selectAll"></label></div>
             <div class="col-1">№</div>
@@ -12,7 +12,7 @@
             <div class="col-1"></div>
         </div>
         <transition-group name="fade">
-            <PhoneBookItem v-for="(item, index) in filteredList"
+            <PhoneBookItem v-for="(item, index) in list"
                            :item="item"
                            :index="index"
                            :key="item.id"
@@ -22,18 +22,19 @@
         </transition-group>
         <transition name="fade">
             <div class="row top-space" v-if="list.length === 0">
-                <div class="col centered">Пока нет ни одного контакта.</div>
+                <div class="col centered">Нет контактов.</div>
             </div>
         </transition>
     </div>
 </template>
 
 <script>
-    const ERR_MSG_ALREADY_EXISTS = 'Контакт с таким номером телефона уже есть.';
-
     import PhoneBookItem from './PhoneBookItem.vue';
-    import AddItemForm from "./AddItemForm.vue";
-    import SearchForm from "./SearchForm.vue";
+    import AddItemForm from './AddItemForm.vue';
+    import SearchForm from './SearchForm.vue';
+
+    import PhoneBookService from '../PhoneBookService';
+    const service = new PhoneBookService();
 
     export default {
         name: "PhoneBook",
@@ -54,7 +55,7 @@
 
                 /* для хранения списка контактов */
                 list: [
-                    {
+                    /*{
                         id: 1000,
                         firstName: "John",
                         lastName: "Lennon",
@@ -75,7 +76,7 @@
                         lastName: "Kuzhelev",
                         fullName: "Max Kuzhelev",
                         phoneNumber: "444-444-444"
-                    }
+                    }*/
                 ],
 
                 /* для хранения контактов, отмеченных чекбоксами */
@@ -94,37 +95,22 @@
             };
         },
 
-        computed: {
-            filteredList: function () {
-                const str = this.searchString.toLowerCase();
-                return this.list.filter(function (item) {
-                    return (str.length === 0 ||
-                        item.firstName.toLowerCase().indexOf(str) >= 0 ||
-                        item.lastName.toLowerCase().indexOf(str) >= 0 ||
-                        item.phoneNumber.toLowerCase().indexOf(str) >= 0);
-                });
-            }
-        },
-
         methods: {
             addItem(item) {
-                const isFound = this.list.some(function (contact) {
-                    return contact.phoneNumber === item.phoneNumber;
-                });
+                const that = this;
 
-                if (isFound) {
-                    this.addStatus = {
-                        status: false,
-                        message: ERR_MSG_ALREADY_EXISTS
-                    };
-                } else {
-                    this.list.push(item);
-                    this.addStatus = {
-                        status: true,
-                        message: item.id
-                    };
-                }
+                service.addContact(item).done(function (response) {
+                    that.addStatus = response;
+                    if (response.status) {
+                        that.loadContacts(that.searchString);
+                    }
+                }).fail(function () {
+                    console.log("addItem request error.");
+                }).always(function () {
+                    console.log("Always in addItem.");
+                });
             },
+
             removeItem(item) {
                 const confirmMessage = this.selectedList.length === 0 ?
                     `Вы действительно хотите удалить ${item.fullName}?` :
@@ -154,6 +140,7 @@
                     }
                 });
             },
+
             changeItemSelection(item, newValue) {
                 /* Добавление/удаление из списка с установленным чекбоксом */
                 if (newValue) {
@@ -168,9 +155,28 @@
                     });
                 }
             },
-            setSearchString(searchString) {
-                this.searchString = searchString;
+
+            loadContacts(searchString) {
+                const that = this;
+
+                service.getContacts(searchString).done(function (response) {
+                    that.list = response.contacts;
+                }).fail(function () {
+                    console.log("loadContacts request error.");
+                }).always(function () {
+                    console.log("Always in loadContacts.");
+                });
             }
+        },
+
+        mounted() {
+            this.loadContacts(this.searchString);
         }
     }
 </script>
+
+<!--TODO
+
+1. Индикатор загрузки
+
+-->

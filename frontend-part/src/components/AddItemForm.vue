@@ -85,7 +85,6 @@
                 }
 
                 this.newContact = {
-                    id: (new Date()).getTime(),
                     firstName: this.newFirstName,
                     lastName: this.newLastName,
                     fullName: this.newFirstName + " " + this.newLastName,
