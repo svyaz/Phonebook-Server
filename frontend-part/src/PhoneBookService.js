@@ -6,20 +6,18 @@ export default function PhoneBookService() {
     };
 
     this.addContact = function (contact) {
-        return $.post({
-            url: '/addContact',
-            contentType: 'application/json',
-            data: JSON.stringify({contact: contact})
-        });
+        return post('/addContact', {contact: contact});
     };
 
     this.deleteContact = function (idList) {
-        return $.post({
-            url: '/deleteContact',
-            contentType: 'application/json',
-            data: JSON.stringify({idList: idList})
-        });
+        return post('/deleteContact', {idList: idList});
     };
-};
 
-//todo: 2. Объединить пост-запросы
+    function post(url, data) {
+        return $.post({
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify(data)
+        });
+    }
+};
