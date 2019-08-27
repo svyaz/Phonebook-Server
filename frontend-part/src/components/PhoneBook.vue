@@ -25,6 +25,9 @@
                 <div class="col centered">Нет контактов.</div>
             </div>
         </transition>
+        <div class="text-center load-indicator" v-if="isIndicatorVisible">
+            <b-spinner variant="secondary"></b-spinner>
+        </div>
     </div>
 </template>
 
@@ -32,7 +35,6 @@
     import PhoneBookItem from './PhoneBookItem.vue';
     import AddItemForm from './AddItemForm.vue';
     import SearchForm from './SearchForm.vue';
-
     import PhoneBookService from '../PhoneBookService';
 
     const service = new PhoneBookService();
@@ -86,6 +88,9 @@
                 /* для поиска */
                 searchString: '',
 
+                /* Видимость индикатора загрузки */
+                isIndicatorVisible: false,
+
                 /* Для передачи сообщения о статусе добавления нового контакта.
                 * status: [true|false] - контакт добавлен или нет.
                 * message: строка. Если добавлен - id нового контакта. Если нет - текст ошибки. */
@@ -99,6 +104,7 @@
         methods: {
             addItem(item) {
                 const that = this;
+                that.isIndicatorVisible = true;
 
                 service.addContact(item).done(function (response) {
                     that.addStatus = response;
@@ -108,7 +114,7 @@
                 }).fail(function () {
                     console.log("addItem request error.");
                 }).always(function () {
-                    console.log("Always in addItem.");
+                    that.isIndicatorVisible = false;
                 });
             },
 
@@ -136,6 +142,7 @@
                             this.selectedList.map(function (e) {
                                 return e.id;
                             });
+                        that.isIndicatorVisible = true;
 
                         service.deleteContact(listToDelete).done(function (response) {
                             if (response.status) {
@@ -144,7 +151,7 @@
                         }).fail(function () {
                             console.log("removeItem request error.");
                         }).always(function () {
-                            console.log("Always in removeItem.");
+                            that.isIndicatorVisible = false;
                         });
 
                         this.selectedList = [];
@@ -170,14 +177,17 @@
 
             loadContacts(searchString) {
                 const that = this;
+                that.isIndicatorVisible = true;
 
-                service.getContacts(searchString).done(function (response) {
-                    that.list = response.contacts;
-                }).fail(function () {
-                    console.log("loadContacts request error.");
-                }).always(function () {
-                    console.log("Always in loadContacts.");
-                });
+                setTimeout(function () {
+                    service.getContacts(searchString).done(function (response) {
+                        that.list = response.contacts;
+                    }).fail(function () {
+                        console.log("loadContacts request error.");
+                    }).always(function () {
+                        that.isIndicatorVisible = false;
+                    });
+                }, 500);
             }
         },
 
@@ -186,9 +196,3 @@
         }
     }
 </script>
-
-<!--TODO
-
-1. Индикатор загрузки
-
--->
