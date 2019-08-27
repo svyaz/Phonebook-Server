@@ -11,9 +11,9 @@ let list = [
 ];
 
 /* Get home page. */
-router.get('/', function (req, res) {
+/*router.get('/', function (req, res) {
     res.render('index', {title: 'Express'});
-});
+});*/
 
 /* Get contacts list with filter. */
 router.get('/getContacts', function (req, res) {
