@@ -1,7 +1,7 @@
 <template>
     <div>
         <AddItemForm v-model="newContact"
-                     :inputAddStatus="addStatus"
+                     :errorStatus="errorStatus"
                      @add-item="addItem"></AddItemForm>
         <SearchForm @search-items="loadContacts"></SearchForm>
         <div class="row list-header">
@@ -91,11 +91,11 @@
                 /* Видимость индикатора загрузки */
                 isIndicatorVisible: false,
 
-                /* Для передачи сообщения о статусе добавления нового контакта.
-                * status: [true|false] - контакт добавлен или нет.
-                * message: строка. Если добавлен - id нового контакта. Если нет - текст ошибки. */
-                addStatus: {
-                    status: true,
+                /* Для передачи сообщения об ошибке на форму статусе добавления нового контакта.
+                * status: [true|false] - ошибка или нет.
+                * message: строка. Текст ошибки. */
+                errorStatus: {
+                    status: false,
                     message: ''
                 }
             };
@@ -103,18 +103,17 @@
 
         methods: {
             addItem(item) {
-                const that = this;
-                that.isIndicatorVisible = true;
+                this.isIndicatorVisible = true;
 
-                service.addContact(item).done(function (response) {
-                    that.addStatus = response;
-                    if (response.status) {
-                        that.loadContacts(that.searchString);
+                service.addContact(item).done(response => {
+                    this.errorStatus = response;
+                    if (!response.status) {
+                        this.loadContacts(this.searchString);
                     }
-                }).fail(function () {
+                }).fail(() => {
                     console.log("addItem request error.");
-                }).always(function () {
-                    that.isIndicatorVisible = false;
+                }).always(() => {
+                    this.isIndicatorVisible = false;
                 });
             },
 
@@ -122,8 +121,6 @@
                 const confirmMessage = this.selectedList.length === 0 ?
                     `Вы действительно хотите удалить ${item.fullName}?` :
                     `Вы действительно хотите удалить выбранные контакты?`;
-
-                const that = this;
 
                 this.$bvModal.msgBoxConfirm(confirmMessage, {
                     size: 'md',
@@ -142,16 +139,16 @@
                             this.selectedList.map(function (e) {
                                 return e.id;
                             });
-                        that.isIndicatorVisible = true;
+                        this.isIndicatorVisible = true;
 
-                        service.deleteContact(listToDelete).done(function (response) {
+                        service.deleteContact(listToDelete).done(response => {
                             if (response.status) {
-                                that.loadContacts(that.searchString);
+                                this.loadContacts(this.searchString);
                             }
-                        }).fail(function () {
+                        }).fail(() => {
                             console.log("removeItem request error.");
-                        }).always(function () {
-                            that.isIndicatorVisible = false;
+                        }).always(() => {
+                            this.isIndicatorVisible = false;
                         });
 
                         this.selectedList = [];
@@ -176,18 +173,15 @@
             },
 
             loadContacts(searchString) {
-                const that = this;
-                that.isIndicatorVisible = true;
+                this.isIndicatorVisible = true;
 
-                setTimeout(function () {
-                    service.getContacts(searchString).done(function (response) {
-                        that.list = response.contacts;
-                    }).fail(function () {
-                        console.log("loadContacts request error.");
-                    }).always(function () {
-                        that.isIndicatorVisible = false;
-                    });
-                }, 500);
+                service.getContacts(searchString).done(response => {
+                    this.list = response.contacts;
+                }).fail(() => {
+                    console.log("loadContacts request error.");
+                }).always(() => {
+                    this.isIndicatorVisible = false;
+                });
             }
         },
 

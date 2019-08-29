@@ -42,7 +42,7 @@
         name: "AddItemForm",
 
         props: {
-            inputAddStatus: {
+            errorStatus: {
                 type: Object,
                 default: {
                     status: true,
@@ -97,13 +97,15 @@
         },
 
         watch: {
-            inputAddStatus: function (newValue) {
-                if (newValue.status) {
+            errorStatus: function (newValue) {
+                if (!newValue.status) {
                     this.newFirstName = "";
                     this.newLastName = "";
                     this.newPhoneNumber = "";
+                    this.errorMessage = "";
+                } else {
+                    this.errorMessage = newValue.message;
                 }
-                this.errorMessage = newValue.message;
             }
         }
     }

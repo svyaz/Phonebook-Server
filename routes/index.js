@@ -32,7 +32,7 @@ router.get('/getContacts', function (req, res) {
 /* Add contact. */
 router.post('/addContact', function (req, res) {
     const newItem = req.body.contact;
-    const addStatus = {};
+    const errorStatus = {};
 
     const isFound = list.some(function (item) {
         return newItem.phoneNumber === item.phoneNumber;
@@ -40,17 +40,17 @@ router.post('/addContact', function (req, res) {
 
     if (isFound) {
         // контакт уже есть
-        addStatus.status = false;
-        addStatus.message = ERR_MSG_ALREADY_EXISTS;
+        errorStatus.status = true;
+        errorStatus.message = ERR_MSG_ALREADY_EXISTS;
     } else {
         // Добавляем контакт
         newItem.id = (new Date()).getTime();
         list.push(newItem);
-        addStatus.status = true;
-        addStatus.message = newItem.id;
+        errorStatus.status = false;
+        errorStatus.message = newItem.id;
     }
 
-    res.send(addStatus);
+    res.send(errorStatus);
 });
 
 /* Delete contact. */
