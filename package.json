@@ -2,6 +2,9 @@
   "name": "phonebook-server",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "start": "nodemon ./bin/www -e js,twig --ignore public/"
+  },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -12,8 +15,5 @@
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
-  },
-  "scripts": {
-    "start": "nodemon ./bin/www -e js,twig --ignore public/"
   }
 }
