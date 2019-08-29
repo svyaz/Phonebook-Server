@@ -38,6 +38,7 @@
     import PhoneBookService from '../PhoneBookService';
 
     const service = new PhoneBookService();
+    const ERR_MSG_COMMUNICATION_ERROR = "Сбой соединения с сервером.";
 
     export default {
         name: "PhoneBook",
@@ -111,7 +112,10 @@
                         this.loadContacts(this.searchString);
                     }
                 }).fail(() => {
-                    console.log("addItem request error.");
+                    this.errorStatus = {
+                        status: true,
+                        message: ERR_MSG_COMMUNICATION_ERROR
+                    };
                 }).always(() => {
                     this.isIndicatorVisible = false;
                 });
@@ -144,9 +148,16 @@
                         service.deleteContact(listToDelete).done(response => {
                             if (response.status) {
                                 this.loadContacts(this.searchString);
+                                this.errorStatus = {
+                                    status: false,
+                                    message: ''
+                                };
                             }
                         }).fail(() => {
-                            console.log("removeItem request error.");
+                            this.errorStatus = {
+                                status: true,
+                                message: ERR_MSG_COMMUNICATION_ERROR
+                            };
                         }).always(() => {
                             this.isIndicatorVisible = false;
                         });
@@ -177,8 +188,15 @@
 
                 service.getContacts(searchString).done(response => {
                     this.list = response.contacts;
+                    this.errorStatus = {
+                        status: false,
+                        message: ''
+                    }
                 }).fail(() => {
-                    console.log("loadContacts request error.");
+                    this.errorStatus = {
+                        status: true,
+                        message: ERR_MSG_COMMUNICATION_ERROR
+                    };
                 }).always(() => {
                     this.isIndicatorVisible = false;
                 });
