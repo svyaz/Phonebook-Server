@@ -1,21 +1,22 @@
-# Phonebook Vue with Express server
+# Phonebook-server
 
-Phonebook with Vue. Server side with Express.
+### Задание:
 
-- webpack
-- babel
-- vue components
-- bootstrap-vue
-- sass
-- css minification
+- Сделать простой backend для телефонной книги.
+- В качестве Frontend-части взять за основу проект Phonebook-Vue.
+- Серверную часть сделать с использованием фреймворка Express.
 
-To run server:
-```
-npm start
-```
-
-To bundle the frontend-part of project:
+### Сборка frontend-части проекта:
 ```
 cd frontend-part/
 npm run build
+```
+
+### Запустить сервер:
+```
+npm start
+```
+После запуска сервера проект доступен по адресу:
+```
+http://localhost:3000
 ```
